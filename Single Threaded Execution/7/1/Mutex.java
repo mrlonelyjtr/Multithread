@@ -2,7 +2,7 @@ public class Mutex {
     private boolean busy = false;
 
     public synchronized void lock() {
-        if (busy) {
+        while (busy) {
             try {
                 wait();
             } catch (InterruptedException e) {

@@ -5,7 +5,7 @@ public class Mutex {
     public synchronized void lock() {
         Thread me = Thread.currentThread();
 
-        if (locks > 0 && owner != me) {
+        while (locks > 0 && owner != me) {
             try {
                 wait();
             } catch (InterruptedException e) {

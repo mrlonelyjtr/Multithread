@@ -1,18 +1,18 @@
-import activeobject.ActiveObject;
-import activeobject.ActiveObjectFactory;
-import activeobject.Result;
+import searcher.Display;
+import searcher.Searcher;
+import searcher.SearcherFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MyFrame extends JFrame implements ActionListener {
+public class MyFrame extends JFrame implements ActionListener, Display {
     private final JTextField textfield = new JTextField("word", 10);
     private final JButton button = new JButton("Search");
     private final JTextArea textarea = new JTextArea(20, 30);
     private final static String NEWLINE = System.getProperty("line.separator");
-    private final ActiveObject activeObject = ActiveObjectFactory.createActiveObject();
+    private final Searcher searcher = SearcherFactory.createSearcher();
 
     public MyFrame() {
         super("ActiveObject Sample");
@@ -40,26 +40,23 @@ public class MyFrame extends JFrame implements ActionListener {
     }
 
     private void searchWord(final String word) {
-        final Result<String> result = activeObject.search(word);
+        searcher.search(word, this);
         println("Searching " + word + "...");
-
-        new Thread() {
-            @Override
-            public void run() {
-                final String url = result.getResultValue();
-
-                SwingUtilities.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            MyFrame.this.println("word = " + word + ", URL = " + url);
-                        }
-                });
-            }
-        }.start();
     }
 
     private void println(String line) {
         textarea.append(line + NEWLINE);
+    }
+
+    @Override
+    public void display(final String line) {
+        SwingUtilities.invokeLater(
+            new Runnable() {
+                @Override
+                public void run() {
+                    MyFrame.this.println(line);
+                }
+        });
+
     }
 }
